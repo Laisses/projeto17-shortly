@@ -1,3 +1,4 @@
+import bcrypt from "bcrypt";
 import { connection } from "./database.js";
 import { validator } from "./schemas.js";
 
@@ -34,6 +35,19 @@ export const validateEmail = async (req, res, next) => {
 
     if (emailRegistered.rows[0]) {
         return res.sendStatus(409);
+    }
+
+    next();
+};
+
+export const validateLogin = async (req, res, next) => {
+    const {email, password} = req.body;
+
+    const activeUser = await connection.query(`SELECT * FROM users WHERE email=$1`, [email]);
+    const correctPassword = bcrypt.compareSync(password, activeUser.rows[0]?.password || "");
+
+    if (!activeUser.rows[0] || !correctPassword) {
+        return res.sendStatus(401);
     }
 
     next();
