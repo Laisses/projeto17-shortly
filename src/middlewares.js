@@ -43,11 +43,16 @@ export const validateEmail = async (req, res, next) => {
 export const validateLogin = async (req, res, next) => {
     const {email, password} = req.body;
 
-    const activeUser = await connection.query(`SELECT * FROM users WHERE email=$1`, [email]);
-    const correctPassword = bcrypt.compareSync(password, activeUser.rows[0]?.password || "");
+    const user = await connection.query(`SELECT * FROM users WHERE email=$1`, [email]);
+    const hashedPassword = bcrypt.compareSync(password, user.rows[0]?.password || "");
+    const session = await connection.query(`SELECT * from sessions WHERE user_id=$1`, [user.rows[0].id]);
 
-    if (!activeUser.rows[0] || !correctPassword) {
+    if (!user.rows[0] || !hashedPassword) {
         return res.sendStatus(401);
+    }
+
+    if (session.rows[0]) {
+        return res.status(401).send({message: "this account is already logged in"});
     }
 
     next();
