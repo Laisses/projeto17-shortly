@@ -6,4 +6,6 @@ import * as s from "./schemas.js";
 export const routes = app => {
 
     app.post("/signup", m.validate(s.user), m.validateEmail, m.asyncError(h.addNewUser));
+
+    app.post("/signin", m.validate(s.userLogin), m.validateLogin, m.asyncError(h.login));
 };
