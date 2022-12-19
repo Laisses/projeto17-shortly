@@ -10,3 +10,14 @@ export const addNewUser = async (req, res) => {
 
     res.sendStatus(201);
 };
+
+export const login = async (req, res) => {
+    const { email } = req.body;
+    const token = uuid();
+
+    const user = await connection.query(`SELECT * FROM users WHERE email=$1`, [email]);
+
+    await connection.query(`INSERT INTO sessions (token, user_id) VALUES ($1, $2);`, [token, user.rows[0].id]);
+
+    res.status(200).send(token);
+}
