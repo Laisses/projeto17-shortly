@@ -69,7 +69,7 @@ export const validateUrl = (req, res, next) => {
     next();
 };
 
-export const authenticate = async (req, res, next) => {
+export const authenticateUser = async (req, res, next) => {
     const { authorization } = req.headers;
     const token = authorization?.replace("Bearer ", "");
 
@@ -87,6 +87,19 @@ export const authenticate = async (req, res, next) => {
     delete user.rows[0].password;
 
     req.user = user.rows[0];
+
+    next();
+};
+
+export const authenticateUrl = async (req, res, next) => {
+    const {id} = req.params;
+    const user = req.user;
+
+    const dtUrl = await connection.query(`SELECT * FROM urls WHERE id=$1;`, [id]);
+
+    if (dtUrl.rows[0].user_id !== user.id) {
+        return res.sendStatus(401);
+    }
 
     next();
 };
