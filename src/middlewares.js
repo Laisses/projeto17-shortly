@@ -68,3 +68,25 @@ export const validateUrl = (req, res, next) => {
 
     next();
 };
+
+export const authenticate = async (req, res, next) => {
+    const {authorization} = req.headers;
+    const token = authorization?.replace("Bearer ", "");
+
+    if (!token) {
+        return res.sendStatus(401);
+    }
+
+    const session = await connection.query(`SELECT * FROM sessions WHERE token=$1;`, [token]);
+    const user = await connection.query(`SELECT * FROM users WHERE id=$1;`, [session?.rows[0].user_id]);
+
+    if (!user.rows[0]) {
+        return res.sendStatus(401);
+    }
+
+    delete user.rows[0].password;
+
+    req.user = user;
+
+    next();
+};
