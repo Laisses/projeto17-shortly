@@ -9,7 +9,8 @@ export const routes = app => {
 
     app.post("/signin", m.validate(s.userLogin), m.validateLogin, m.asyncError(h.login));
 
-    app.post("/urls/shorten", m.validate(s.url), m.validateUrl, m.authenticate, m.asyncError(h.addNewUrl));
+    app.post("/urls/shorten", m.validate(s.url), m.validateUrl, m.authenticateUser, m.asyncError(h.addNewUrl));
     app.get("/urls/:id", m.asyncError(h.selectUrl));
     app.get("/urls/open/:shortUrl", m.asyncError(h.openUrl));
+    app.delete("/urls/:id", m.authenticateUser, m.authenticateUrl, m.asyncError(h.deleteUrl));
 };
