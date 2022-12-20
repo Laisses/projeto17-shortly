@@ -41,7 +41,7 @@ export const validateEmail = async (req, res, next) => {
 };
 
 export const validateLogin = async (req, res, next) => {
-    const {email, password} = req.body;
+    const { email, password } = req.body;
 
     const user = await connection.query(`SELECT * FROM users WHERE email=$1`, [email]);
     const hashedPassword = bcrypt.compareSync(password, user.rows[0]?.password || "");
@@ -52,14 +52,14 @@ export const validateLogin = async (req, res, next) => {
     }
 
     if (session.rows[0]) {
-        return res.status(401).send({message: "this account is already logged in"});
+        return res.status(401).send({ message: "this account is already logged in" });
     }
 
     next();
 };
 
 export const validateUrl = (req, res, next) => {
-    const {url} = req.body;
+    const { url } = req.body;
     const regex = /(?:https?):\/\/(\w+:?\w*)?(\S+)(:\d+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/;
 
     if (!regex.test(url)) {
@@ -70,7 +70,7 @@ export const validateUrl = (req, res, next) => {
 };
 
 export const authenticate = async (req, res, next) => {
-    const {authorization} = req.headers;
+    const { authorization } = req.headers;
     const token = authorization?.replace("Bearer ", "");
 
     if (!token) {
@@ -87,7 +87,6 @@ export const authenticate = async (req, res, next) => {
     delete user.rows[0].password;
 
     req.user = user.rows[0];
-    console.log(req.user);
 
     next();
 };

@@ -1,4 +1,5 @@
 import bcrypt from "bcrypt";
+import { nanoid } from 'nanoid'
 import { v4 as uuid } from "uuid";
 import { connection } from "./database.js";
 
@@ -21,3 +22,13 @@ export const login = async (req, res) => {
 
     res.status(200).send(token);
 }
+
+export const addNewUrl = async (req, res) => {
+    const { url } = req.body;
+    const user = req.user;
+    const shortUrl = nanoid();
+
+    await connection.query(`INSERT INTO urls (user_id, original_url, short_url, view_count) VALUES ($1, $2, $3, $4);`, [user.id, url, shortUrl, 0]);
+
+    res.status(201).send({shortUrl});
+};
