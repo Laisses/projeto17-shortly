@@ -92,10 +92,14 @@ export const authenticateUser = async (req, res, next) => {
 };
 
 export const authenticateUrl = async (req, res, next) => {
-    const {id} = req.params;
+    const { id } = req.params;
     const user = req.user;
 
     const dtUrl = await connection.query(`SELECT * FROM urls WHERE id=$1;`, [id]);
+
+    if (!dtUrl.rows[0]) {
+        return res.sendStatus(404);
+    }
 
     if (dtUrl.rows[0].user_id !== user.id) {
         return res.sendStatus(401);
