@@ -11,4 +11,5 @@ export const routes = app => {
 
     app.post("/urls/shorten", m.validate(s.url), m.validateUrl, m.authenticate, m.asyncError(h.addNewUrl));
     app.get("/urls/:id", m.asyncError(h.selectUrl));
+    app.get("/urls/open/:shortUrl", m.asyncError(h.openUrl));
 };
