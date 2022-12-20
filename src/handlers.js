@@ -38,7 +38,7 @@ export const selectUrl = async (req, res) => {
 
     const url = await connection.query(`SELECT * FROM urls WHERE id=$1`, [id]);
 
-    if(!url.rows[0]) {
+    if (!url.rows[0]) {
         return res.sendStatus(404);
     }
 
@@ -47,4 +47,21 @@ export const selectUrl = async (req, res) => {
         shortUrl: url.rows[0].short_url,
         url: url.rows[0].original_url
     });
+};
+
+export const openUrl = async (req, res) => {
+    const { shortUrl } = req.params;
+
+    const dtUrl = await connection.query(`SELECT * FROM urls WHERE short_url=$1;`, [shortUrl]);
+
+    if (!dtUrl.rows[0]) {
+        return res.sendStatus(404);
+    }
+
+    const count = dtUrl.rows[0].view_count;
+    const url = dtUrl.rows[0].original_url;
+
+    await connection.query(`UPDATE urls SET view_count=$1;`, [count + 1]);
+
+    res.redirect(url);
 };
