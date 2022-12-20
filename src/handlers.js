@@ -30,5 +30,21 @@ export const addNewUrl = async (req, res) => {
 
     await connection.query(`INSERT INTO urls (user_id, original_url, short_url, view_count) VALUES ($1, $2, $3, $4);`, [user.id, url, shortUrl, 0]);
 
-    res.status(201).send({shortUrl});
+    res.status(201).send({ shortUrl });
+};
+
+export const selectUrl = async (req, res) => {
+    const { id } = req.params;
+
+    const url = await connection.query(`SELECT * FROM urls WHERE id=$1`, [id]);
+
+    if(!url.rows[0]) {
+        return res.sendStatus(404);
+    }
+
+    res.status(200).send({
+        id: url.rows[0].id,
+        shortUrl: url.rows[0].short_url,
+        url: url.rows[0].original_url
+    });
 };
