@@ -10,4 +10,5 @@ export const routes = app => {
     app.post("/signin", m.validate(s.userLogin), m.validateLogin, m.asyncError(h.login));
 
     app.post("/urls/shorten", m.validate(s.url), m.validateUrl, m.authenticate, m.asyncError(h.addNewUrl));
+    app.get("/urls/:id", m.asyncError(h.selectUrl));
 };
