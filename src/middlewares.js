@@ -57,3 +57,14 @@ export const validateLogin = async (req, res, next) => {
 
     next();
 };
+
+export const validateUrl = (req, res, next) => {
+    const {url} = req.body;
+    const regex = /(?:https?):\/\/(\w+:?\w*)?(\S+)(:\d+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/;
+
+    if (!regex.test(url)) {
+        return res.sendStatus(400);
+    }
+
+    next();
+};
