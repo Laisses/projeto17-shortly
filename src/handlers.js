@@ -74,3 +74,29 @@ export const deleteUrl = async (req, res) => {
 
     res.sendStatus(204);
 };
+
+export const selectUser = async (req, res) => {
+    const user = req.user;
+
+    const dtUrls = await connection.query(`SELECT * FROM urls WHERE user_id=$1;`, [user.id]);
+
+    const visitCount = dtUrls.rows
+        .map(url => url.view_count)
+        .reduce((acc, curr) => acc + curr, 0);
+
+    const urls = dtUrls.rows.map(url => {
+        return {
+            id: url.id,
+            shortUrl: url.short_url,
+            url: url.original_url,
+            visitantCount: url.view_count
+        }
+    });
+
+    res.status(200).send({
+        id: user.id,
+        name: user.name,
+        visitCount,
+        shortenedUrls: [...urls]
+    })
+};
