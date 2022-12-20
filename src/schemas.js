@@ -14,3 +14,7 @@ export const userLogin = Joi.object({
     email: Joi.string().email().required(),
     password: Joi.string().required(),
 });
+
+export const url = Joi.object({
+    url: Joi.string().uri().required()
+});
