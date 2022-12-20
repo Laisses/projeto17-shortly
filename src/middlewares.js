@@ -78,7 +78,6 @@ export const authenticate = async (req, res, next) => {
     }
 
     const session = await connection.query(`SELECT * FROM sessions WHERE token=$1;`, [token]);
-    console.log(session);
     const user = await connection.query(`SELECT * FROM users WHERE id=$1;`, [session.rows[0]?.user_id]);
 
     if (!user.rows[0]) {
