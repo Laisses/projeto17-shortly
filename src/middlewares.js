@@ -63,7 +63,7 @@ export const validateUrl = (req, res, next) => {
     const regex = /(?:https?):\/\/(\w+:?\w*)?(\S+)(:\d+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/;
 
     if (!regex.test(url)) {
-        return res.sendStatus(400);
+        return res.sendStatus(401);
     }
 
     next();
@@ -86,7 +86,8 @@ export const authenticate = async (req, res, next) => {
 
     delete user.rows[0].password;
 
-    req.user = user;
+    req.user = user.rows[0];
+    console.log(req.user);
 
     next();
 };
