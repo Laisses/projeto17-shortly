@@ -60,8 +60,17 @@ export const openUrl = async (req, res) => {
 
     const count = dtUrl.rows[0].view_count;
     const url = dtUrl.rows[0].original_url;
+    const id = dtUrl.rows[0].id;
 
-    await connection.query(`UPDATE urls SET view_count=$1;`, [count + 1]);
+    await connection.query(`UPDATE urls SET view_count=$1 WHERE id=$2;`, [count + 1, id]);
 
     res.redirect(url);
+};
+
+export const deleteUrl = async (req, res) => {
+    const { id } = req.params;
+
+    await connection.query(`DELETE FROM urls WHERE id=$1;`, [id]);
+
+    res.sendStatus(204);
 };
