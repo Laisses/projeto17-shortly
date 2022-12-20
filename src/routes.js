@@ -15,4 +15,6 @@ export const routes = app => {
     app.delete("/urls/:id", m.authenticateUser, m.authenticateUrl, m.asyncError(h.deleteUrl));
 
     app.get("/users/me", m.authenticateUser, m.asyncError(h.selectUser));
+
+    app.get("/ranking", m.asyncError(h.ranking));
 };
