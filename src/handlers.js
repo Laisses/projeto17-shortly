@@ -100,3 +100,41 @@ export const selectUser = async (req, res) => {
         shortenedUrls: [...urls]
     })
 };
+
+export const ranking = async (_req, res) => {
+    const rank = await connection.query(`
+        SELECT
+            users.id,
+            users.name,
+            COUNT(urls.short_url) AS "linksCount",
+            SUM(COALESCE(urls.view_count, 0)) AS "visitCount"
+        FROM
+            users
+        LEFT JOIN
+            urls
+        ON
+            users.id = urls.user_id
+        GROUP BY
+            users.name,
+            users.id
+        ORDER BY
+            "linksCount" DESC
+        LIMIT
+            10;
+    `);
+
+    res.status(200).send(rank.rows);
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
